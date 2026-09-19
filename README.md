@@ -53,7 +53,8 @@ copy .env.example .env
 python app.py
 ```
 
-<img width="1920" height="1080" alt="приложение" src="https://github.com/user-attachments/assets/8b613d90-e739-4305-9a58-379176845722" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/573ebbed-2b4a-455f-b5b4-19c89fc81346" />
+
 
 Сам откроется браузер: http://127.0.0.1:8765
 
@@ -123,3 +124,4 @@ python run.py
 10 SW_1012 - 5216 ok (4116 габарит стояка, штурвалы 244 не длина)
 
 Листы 2, 5, 8, 9 закрыты руками.
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1b0c8bc1-6ea1-4cfe-bc06-8874fdcc2050" />
