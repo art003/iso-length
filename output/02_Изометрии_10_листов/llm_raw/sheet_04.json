@@ -5,103 +5,103 @@
       "id": "D1",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D2",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D3",
       "decision": "not_length",
-      "role": "other",
-      "reason": "габарит/координата"
+      "role": "support_offset",
+      "reason": "опора"
     },
     {
       "id": "D4",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D5",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D6",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D7",
-      "decision": "exclude_nested",
-      "role": "overall_same_run",
-      "reason": "сумма участков"
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трубы"
     },
     {
       "id": "D8",
       "decision": "not_length",
-      "role": "other",
-      "reason": "габарит/координата"
+      "role": "support_offset",
+      "reason": "опора"
     },
     {
       "id": "D9",
-      "decision": "not_length",
-      "role": "other",
-      "reason": "габарит/координата"
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трубы"
     },
     {
       "id": "D10",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D11",
       "decision": "not_length",
-      "role": "other",
-      "reason": "габарит/координата"
+      "role": "support_offset",
+      "reason": "опора"
     },
     {
       "id": "D12",
-      "decision": "not_length",
-      "role": "other",
-      "reason": "габарит/координата"
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трубы"
     },
     {
       "id": "D13",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D14",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D15",
-      "decision": "exclude_nested",
-      "role": "overall_same_run",
-      "reason": "сумма участков"
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трубы"
     },
     {
       "id": "D16",
       "decision": "not_length",
-      "role": "other",
-      "reason": "габарит/координата"
+      "role": "support_offset",
+      "reason": "опора"
     },
     {
       "id": "D17",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     }
   ],
   "notes": []

@@ -29,6 +29,7 @@
       <p>ИИ размечает размеры на чертеже. Сумму считает программа. Спорное уходит в review и в длину не входит.</p>
       <div class="hero__stats">
         <div><b id="stat-pages">—</b><span>листов в последнем прогоне</span></div>
+        <div><b id="stat-total">—</b><span>сумма, м</span></div>
         <div><b id="stat-api">Groq</b><span>выбранный API</span></div>
         <div><b id="stat-cost">$0</b><span>стоимость по тарифу</span></div>
       </div>
@@ -42,7 +43,10 @@
           <h2>Параметры</h2>
           <form id="form">
             <label class="lbl">PDF с изометриями</label>
-            <input type="file" id="pdf" accept=".pdf">
+            <div class="drop" id="drop">
+              <input type="file" id="pdf" accept=".pdf">
+              <span id="pdf-name">файл не выбран — можно перетащить сюда</span>
+            </div>
             <label class="check"><input type="checkbox" id="use-default" checked> взять файл из data, если свой не выбран</label>
 
             <label class="lbl">API</label>
@@ -62,11 +66,12 @@
             <label class="lbl">листы</label>
             <input type="text" id="pages" placeholder="пусто = все, или 7 или 1,7">
 
-            <label class="check"><input type="checkbox" id="replay"> не звонить в API, взять json из output/llm_raw</label>
-            <label class="check"><input type="checkbox" id="fresh"> пересчитать заново, старые json не брать</label>
+            <label class="check"><input type="checkbox" id="replay"> не звонить в API, взять json из папки этого PDF</label>
+            <label class="check"><input type="checkbox" id="fresh"> пересчитать заново, старые json не брать (закрытые locked не трогает)</label>
 
             <div class="actions">
               <button class="btn" type="submit" id="run">Рассчитать</button>
+              <button class="btn btn-stop" type="button" id="stop" disabled>Остановить</button>
               <button class="btn btn-ghost" type="button" id="open-out">Папка output</button>
             </div>
           </form>
@@ -80,7 +85,18 @@
 
     <section id="page-results" class="page">
       <div class="card">
-        <h2>Таблица длин</h2>
+        <div class="results-head">
+          <div>
+            <h2 id="results-title">Таблица длин</h2>
+            <p class="hint" id="results-pdf"></p>
+          </div>
+          <div class="results-tools">
+            <select id="jobs" aria-label="посчитанные PDF"></select>
+            <a class="btn btn-ghost" id="dl-xlsx" href="#" download>Excel</a>
+            <a class="btn btn-ghost" id="dl-html" href="#" target="_blank">отчёт</a>
+          </div>
+        </div>
+        <div class="totals" id="totals"></div>
         <table>
           <thead>
             <tr>
@@ -99,9 +115,9 @@
         <ol>
           <li>Выбери PDF или оставь галку «файл из data».</li>
           <li>API: Groq без карты, OpenAI и Codex за деньги, ключ один на оба OpenAI.</li>
-          <li>Если меняешь API после Groq — включи «пересчитать заново», иначе подтянутся старые json.</li>
-          <li>Нажми Рассчитать. На Groq между листами пауза около минуты — так лимит, не зависание.</li>
-          <li>Таблица и картинки появятся во вкладке Результаты и в папке output.</li>
+          <li>Если меняешь API после Groq — включи «пересчитать заново», иначе подтянутся старые json. Листы с `"locked": true` в llm_raw не перезапишутся.</li>
+          <li>Нажми Рассчитать. На Groq два прохода на лист, пауза около минуты между запросами — так лимит, не зависание. 10 листов займут около 20–25 минут. Закрытые locked листы не пересчитывает. Кнопка Остановить — после текущего запроса к API, уже посчитанные листы остаются.</li>
+          <li>Таблица и картинки — вкладка Результаты. Клик по строке или превью открывает лист: клик по цифре крутит решение (в сумму → глянуть → вложенный → не длина), сумма пересчитывается сразу. Так же копится разметка, если потом учить свою модель. На диске: <code>output\имя_pdf\</code>.</li>
         </ol>
         <p>Длина = куски вдоль трубы + ветки, один раз, до ПОДКЛЮЧЕНИЕ и СМ. Габарит и штурвал в сумму не идут.</p>
       </div>
@@ -112,6 +128,26 @@
     <span>Расчёт длины трубопроводов по изометриям</span>
     <span>prod by art003</span>
   </footer>
+  <div class="editor" id="editor" hidden>
+    <div class="editor__box">
+      <div class="editor__head">
+        <div>
+          <h2 id="ed-title">Лист</h2>
+          <p class="hint" id="ed-sum"></p>
+        </div>
+        <button type="button" class="btn btn-ghost" id="ed-close">Закрыть</button>
+      </div>
+      <div class="editor__body">
+        <div class="editor__scroll">
+          <div class="editor__canvas" id="ed-canvas">
+            <img id="ed-img" alt="лист">
+          </div>
+        </div>
+        <ul class="editor__list" id="ed-list"></ul>
+      </div>
+      <p class="hint">Клик по цифре или строке справа: в сумму → глянуть → вложенный → не длина. После правки лист закрыт (locked), повторный Groq его не затрёт.</p>
+    </div>
+  </div>
   <script src="/static/js/app.js"></script>
 </body>
 </html>

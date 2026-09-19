@@ -5,85 +5,85 @@
       "id": "D1",
       "decision": "exclude_nested",
       "role": "overall_same_run",
-      "reason": "Габарит, включает D2, D3, D4"
+      "reason": "габарит прогона"
     },
     {
       "id": "D2",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D3",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D4",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D5",
       "decision": "include",
-      "role": "branch",
-      "reason": "Короткий отвод"
+      "role": "main",
+      "reason": "участок у узла"
     },
     {
       "id": "D6",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D7",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D8",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D9",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок у узла"
     },
     {
       "id": "D10",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D11",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D12",
-      "decision": "include",
-      "role": "main",
-      "reason": "Короткий отвод"
+      "decision": "not_length",
+      "role": "other",
+      "reason": "мелкая деталь"
     },
     {
       "id": "D13",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D14",
       "decision": "include",
       "role": "main",
-      "reason": "Участок трассы"
+      "reason": "участок трубы"
     }
   ],
   "notes": []

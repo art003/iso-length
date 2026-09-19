@@ -2,6 +2,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -16,9 +17,38 @@ load_dotenv(ROOT / ".env")
 
 from annotate import annotate_final, overlay_candidate_ids
 from extract import extract_pdf
+from guards import apply_guards
+from jobs import migrate_legacy, now_stamp, save_index
 from llm_client import LlmClient
 from pricing import estimate_cost_usd, PRICES_USD_PER_M
-from report import SheetResult, build_formula, decide_status, write_csv, write_json, write_xlsx
+from report import (
+    SheetResult,
+    build_formula,
+    decide_status,
+    write_csv,
+    write_html_report,
+    write_json,
+    write_readme,
+    write_xlsx,
+    metrics_text,
+)
+from review import write_hits
+
+
+def _provider_pause(client: LlmClient, log, why: str, cancel=None) -> bool:
+    if client.provider == "groq":
+        pause = int(os.getenv("GROQ_PAUSE_S", "70"))
+        log(f"пауза {pause} с ({why})")
+        for _ in range(max(pause, 1)):
+            if cancel is not None and cancel.is_set():
+                log("остановлено во время паузы")
+                return True
+            time.sleep(1)
+    elif client.provider == "openrouter":
+        time.sleep(8)
+        if cancel is not None and cancel.is_set():
+            return True
+    return False
 
 
 def process_pdf(
@@ -27,21 +57,41 @@ def process_pdf(
     page_filter: set[int] | None = None,
     log=print,
     use_cache: bool = True,
+    cancel=None,
 ) -> dict:
     t0 = time.perf_counter()
+    out_root = Path(out_dir)
+    job = migrate_legacy(out_root, pdf_path)
+    log(f"PDF: {pdf_path.name}")
+    log(f"папка: {job}")
+    dest_pdf = job / pdf_path.name
+    if pdf_path.resolve() != dest_pdf.resolve() and pdf_path.exists():
+        try:
+            shutil.copy2(pdf_path, dest_pdf)
+        except OSError:
+            pass
     sheets = extract_pdf(pdf_path, page_filter)
     if not sheets:
         raise RuntimeError("Не удалось извлечь листы из PDF (проверьте файл и --pages).")
+    if os.getenv("ISO_LLM_PROVIDER", "").strip().lower() == "replay":
+        replay_dir = os.getenv("ISO_REPLAY_DIR")
+        replay_path = Path(replay_dir) if replay_dir else None
+        if replay_path is None or not replay_path.exists():
+            os.environ["ISO_REPLAY_DIR"] = str(job / "llm_raw")
     client = LlmClient()
     results: list[SheetResult] = []
-    markup_dir = out_dir / "markup"
-    overlay_dir = out_dir / "overlays"
-    raw_dir = out_dir / "llm_raw"
+    markup_dir = job / "markup"
+    overlay_dir = job / "overlays"
+    raw_dir = job / "llm_raw"
     markup_dir.mkdir(parents=True, exist_ok=True)
     overlay_dir.mkdir(parents=True, exist_ok=True)
     raw_dir.mkdir(parents=True, exist_ok=True)
 
+    skip_api = False
     for sheet in sheets:
+        if cancel is not None and cancel.is_set() and not skip_api:
+            skip_api = True
+            log("остановка: дальше без API")
         cand_dicts = [
             {
                 "id": c.cid,
@@ -53,29 +103,66 @@ def process_pdf(
         ]
         overlay = overlay_candidate_ids(sheet.pixmap_png, sheet.candidates, sheet.render_scale)
         (overlay_dir / f"sheet_{sheet.sheet_no:02d}_{sheet.line_id}_ids.png").write_bytes(overlay)
+        write_hits(sheet, overlay_dir)
 
         calls_before = client.usage.calls
         raw_path = raw_dir / f"sheet_{sheet.sheet_no:02d}.json"
         wanted = {c["id"] for c in cand_dicts}
         llm = None
-        if use_cache and raw_path.exists():
+        locked = False
+        if raw_path.exists():
             try:
                 cached = json.loads(raw_path.read_text(encoding="utf-8"))
                 got = {it.get("id") for it in (cached.get("items") or [])}
-                if wanted <= got:
+                locked = bool(cached.get("locked"))
+                if locked and wanted <= got:
+                    llm = cached
+                    log(f"Лист {sheet.sheet_no:02d} закрыт, json не трогаю")
+                elif use_cache and wanted <= got:
                     llm = cached
                     log(f"Лист {sheet.sheet_no:02d} уже есть, пропускаю")
             except json.JSONDecodeError:
                 llm = None
+                locked = False
+        from_api = False
         if llm is None:
+            if skip_api:
+                log(f"Лист {sheet.sheet_no:02d} нет json, пропуск")
+                continue
             llm = client.classify_sheet(sheet.sheet_no, sheet.line_id, cand_dicts, overlay)
-            raw_path.write_text(json.dumps(llm, ensure_ascii=False, indent=2), encoding="utf-8")
-            if client.provider == "groq" and sheet is not sheets[-1]:
-                pause = int(os.getenv("GROQ_PAUSE_S", "70"))
-                log(f"пауза {pause} с (лимит Groq), следующий лист...")
-                time.sleep(pause)
-            elif client.provider == "openrouter":
-                time.sleep(8)
+            from_api = True
+            two_passes = client.provider != "replay" and int(os.getenv("ISO_LLM_PASSES", "2")) >= 2
+            if two_passes:
+                stopped = _provider_pause(client, log, "перед вторым проходом", cancel)
+                draft, hint_notes = apply_guards(sheet.candidates, llm)
+                hint = ", ".join(hint_notes)
+                if stopped:
+                    skip_api = True
+                    llm = draft
+                else:
+                    log(f"Лист {sheet.sheet_no:02d} второй проход...")
+                    try:
+                        llm = client.classify_sheet(
+                            sheet.sheet_no,
+                            sheet.line_id,
+                            cand_dicts,
+                            overlay,
+                            first=draft,
+                            hint=hint,
+                        )
+                    except Exception as e:
+                        log(f"Лист {sheet.sheet_no:02d} второй проход не вышел, оставляю первый: {e}")
+                        llm = draft
+            last_sheet = sheet is sheets[-1]
+            if not last_sheet and not skip_api:
+                if _provider_pause(client, log, "следующий лист", cancel):
+                    skip_api = True
+        if not locked:
+            llm, guard_notes = apply_guards(sheet.candidates, llm)
+            if guard_notes:
+                log(f"Лист {sheet.sheet_no:02d} авто: " + ", ".join(guard_notes))
+            if from_api or guard_notes:
+                raw_path.write_text(json.dumps(llm, ensure_ascii=False, indent=2), encoding="utf-8")
 
         by_id = {c.cid: c for c in sheet.candidates}
         decisions: dict[str, str] = {}
@@ -143,11 +230,29 @@ def process_pdf(
                 ambiguous=ambiguous,
                 llm_raw=llm,
                 ai_calls=client.usage.calls - calls_before,
+                markup_name=png_name,
             )
         )
         log(
             f"Лист {sheet.sheet_no:02d} {line_id}: {length_mm} мм ({length_mm/1000:.3f} м) [{status}]"
         )
+
+    if cancel is not None and cancel.is_set():
+        log("остановлено")
+        prev_path = job / "metrics.json"
+        if not results and prev_path.exists():
+            return json.loads(prev_path.read_text(encoding="utf-8"))
+        if results and prev_path.exists():
+            from review import _row_to_result
+
+            prev = json.loads(prev_path.read_text(encoding="utf-8"))
+            have = {r.sheet_no for r in results}
+            for s in prev.get("sheets") or []:
+                if int(s["sheet_no"]) not in have:
+                    results.append(_row_to_result(job, s))
+        if not results:
+            raise RuntimeError("остановлено до первого листа")
+        results.sort(key=lambda r: r.sheet_no)
 
     elapsed = time.perf_counter() - t0
     usage = client.usage
@@ -155,18 +260,54 @@ def process_pdf(
     pages = max(len(results), 1)
     cost_per_page = cost / pages
     calls_per_page = usage.calls / pages
-
-    write_csv(out_dir / "lengths.csv", results)
-    write_xlsx(out_dir / "lengths.xlsx", results)
-
+    total_mm = sum(r.length_mm for r in results)
+    ok_n = sum(1 for r in results if r.status == "ok")
+    review_n = sum(1 for r in results if r.status == "review")
     inn_p, out_p = PRICES_USD_PER_M.get(usage.model.lower(), (0.30, 2.50))
     replay = usage.provider == "replay"
+
+    live_api = None
+    prev_path = job / "metrics.json"
+    if replay and prev_path.exists():
+        try:
+            prev = json.loads(prev_path.read_text(encoding="utf-8"))
+            live_api = prev.get("live_api")
+            if not live_api and prev.get("ai_calls_total"):
+                live_api = {
+                    "provider": prev.get("provider"),
+                    "model": prev.get("model"),
+                    "ai_calls_total": prev.get("ai_calls_total"),
+                    "total_time_s": prev.get("total_time_s"),
+                    "input_tokens": prev.get("input_tokens"),
+                    "output_tokens": prev.get("output_tokens"),
+                    "cost_total_usd": prev.get("cost_total_usd"),
+                }
+        except json.JSONDecodeError:
+            live_api = None
+    if not replay:
+        live_api = {
+            "provider": usage.provider,
+            "model": usage.model,
+            "ai_calls_total": usage.calls,
+            "total_time_s": round(elapsed, 2),
+            "input_tokens": usage.input_tokens,
+            "output_tokens": usage.output_tokens,
+            "cost_total_usd": round(cost, 6),
+        }
+
     metrics = {
         "pdf": pdf_path.name,
+        "job": job.name,
+        "folder": job.name,
+        "updated": now_stamp(),
         "provider": "без API" if replay else usage.provider,
         "model": usage.model,
         "ocr": "нет, текст из pdf (pymupdf)",
         "pages": len(results),
+        "total_mm": total_mm,
+        "total_m": round(total_mm / 1000.0, 3),
+        "ok": ok_n,
+        "review": review_n,
         "total_time_s": round(elapsed, 2),
         "ai_calls_total": 0 if replay else usage.calls,
         "ai_retries": 0 if replay else usage.retries,
@@ -180,11 +321,13 @@ def process_pdf(
         "cost_formula": (
             f"({usage.input_tokens} / 1e6) * {inn_p} + ({usage.output_tokens} / 1e6) * {out_p}"
         ),
+        "live_api": live_api,
         "note": (
-            "API не вызывал, ответы из llm_raw. Чтобы посчитать $ - python run.py с ключом."
+            "Суммы из json, API не вызывал."
             if replay
             else "Считал по токенам из ответа API."
         ),
+        "thumbs": [f"{job.name}/markup/{r.markup_name}" for r in results if r.markup_name],
         "sheets": [
             {
                 "sheet_no": r.sheet_no,
@@ -198,34 +341,31 @@ def process_pdf(
                 "excluded": r.excluded,
                 "ambiguous": r.ambiguous,
                 "ai_calls": r.ai_calls,
+                "markup": f"{job.name}/markup/{r.markup_name}" if r.markup_name else "",
             }
             for r in results
         ],
     }
-    write_json(out_dir / "metrics.json", metrics)
-    (out_dir / "metrics.txt").write_text(_metrics_text(metrics), encoding="utf-8")
-    log(_metrics_text(metrics))
+    write_csv(job / "lengths.csv", results)
+    write_xlsx(job / "lengths.xlsx", results, metrics)
+    write_json(job / "metrics.json", metrics)
+    (job / "metrics.txt").write_text(metrics_text(metrics), encoding="utf-8")
+    write_readme(job / "что_это.txt", metrics, results)
+    write_html_report(job / "report.html", metrics, results)
+    save_index(out_root, {
+        "id": job.name,
+        "pdf": pdf_path.name,
+        "folder": job.name,
+        "updated": metrics["updated"],
+        "pages": metrics["pages"],
+        "total_mm": total_mm,
+        "total_m": metrics["total_m"],
+        "ok": ok_n,
+        "review": review_n,
+    })
+    log(metrics_text(metrics))
+    log(f"готово: {job / 'lengths.xlsx'}")
     return metrics
-
-
-def _metrics_text(m: dict) -> str:
-    inn = m["tariff_usd_per_1m_tokens"]["input"]
-    out = m["tariff_usd_per_1m_tokens"]["output"]
-    return "\n".join(
-        [
-            f"Модель в коде: {m['provider']} / {m['model']}",
-            f"OCR: {m['ocr']}",
-            f"Листов: {m['pages']}",
-            f"Время, с: {m['total_time_s']}",
-            f"Обращений к API: {m['ai_calls_total']} (повторы: {m['ai_retries']})",
-            f"Токены: {m['input_tokens']} / {m['output_tokens']}",
-            f"Тариф {m['tariff_date']}: ${inn} in / ${out} out за 1M",
-            f"Стоимость: ${m['cost_total_usd']}",
-            f"На лист: ${m['cost_per_page_usd']}",
-            f"Формула: {m['cost_formula']}",
-            m.get("note") or "",
-        ]
-    )
 
 
 def main() -> None:

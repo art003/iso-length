@@ -1,5 +1,6 @@
 {
   "line_id": "P15_1039",
+  "locked": true,
   "items": [
     {"id": "D1", "decision": "include", "role": "main", "reason": "к нижнему СМ"},
     {"id": "D2", "decision": "include", "role": "branch", "reason": "отвод DN50X50"},

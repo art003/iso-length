@@ -1,5 +1,6 @@
 {
   "line_id": "SW_1001",
+  "locked": true,
   "items": [
     {"id": "D1", "decision": "include", "role": "main", "reason": "участок трассы"},
     {"id": "D2", "decision": "include", "role": "main", "reason": "кусок 6000"},

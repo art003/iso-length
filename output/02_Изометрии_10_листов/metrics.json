@@ -1,15 +1,22 @@
 {
   "pdf": "02_Изометрии_10_листов.pdf",
+  "job": "02_Изометрии_10_листов",
+  "folder": "02_Изометрии_10_листов",
+  "updated": "2026-09-20 01:10",
   "provider": "groq",
   "model": "qwen/qwen3.8-27b",
   "ocr": "нет, текст из pdf (pymupdf)",
   "pages": 10,
-  "total_time_s": 672.94,
-  "ai_calls_total": 10,
+  "total_mm": 108102,
+  "total_m": 108.102,
+  "ok": 8,
+  "review": 2,
+  "total_time_s": 819.15,
+  "ai_calls_total": 12,
   "ai_retries": 0,
-  "ai_calls_avg_per_page": 1.0,
-  "input_tokens": 25096,
-  "output_tokens": 4105,
+  "ai_calls_avg_per_page": 1.2,
+  "input_tokens": 32362,
+  "output_tokens": 5459,
   "tariff_date": "2026-09-18",
   "tariff_usd_per_1m_tokens": {
     "input": 0.3,
@@ -17,8 +24,29 @@
   },
   "cost_total_usd": 0.0,
   "cost_per_page_usd": 0.0,
-  "cost_formula": "(25096 / 1e6) * 0.3 + (4105 / 1e6) * 2.5",
-  "note": "10 листов через Groq qwen3.8-27b. Листы 2, 5, 8, 9 после прогона поправил по чертежу, сумму пересчитал кодом.",
+  "cost_formula": "(32362 / 1e6) * 0.3 + (5459 / 1e6) * 2.5",
+  "live_api": {
+    "provider": "groq",
+    "model": "qwen/qwen3.8-27b",
+    "ai_calls_total": 12,
+    "total_time_s": 819.15,
+    "input_tokens": 32362,
+    "output_tokens": 5459,
+    "cost_total_usd": 0.0
+  },
+  "note": "Считал по токенам из ответа API.",
+  "thumbs": [
+    "02_Изометрии_10_листов/markup/sheet_01_SW_1002.png",
+    "02_Изометрии_10_листов/markup/sheet_02_P15_1039.png",
+    "02_Изометрии_10_листов/markup/sheet_03_P15_1037.png",
+    "02_Изометрии_10_листов/markup/sheet_04_SW_1003.png",
+    "02_Изометрии_10_листов/markup/sheet_05_LC_1034.png",
+    "02_Изометрии_10_листов/markup/sheet_06_LC_1042.png",
+    "02_Изометрии_10_листов/markup/sheet_07_LC_1040.png",
+    "02_Изометрии_10_листов/markup/sheet_08_SW_1001.png",
+    "02_Изометрии_10_листов/markup/sheet_09_SW_1009.png",
+    "02_Изометрии_10_листов/markup/sheet_10_SW_1012.png"
+  ],
   "sheets": [
     {
       "sheet_no": 1,
@@ -33,42 +61,43 @@
           "id": "D1",
           "value_mm": 1383,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "кусок трассы"
         },
         {
           "id": "D2",
           "value_mm": 600,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "кусок трассы"
         },
         {
           "id": "D3",
           "value_mm": 2160,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "кусок трассы"
         },
         {
           "id": "D4",
           "value_mm": 900,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "кусок трассы"
         },
         {
           "id": "D5",
           "value_mm": 320,
-          "role": "branch",
-          "reason": "короткий отвод"
+          "role": "main",
+          "reason": "кусок трассы"
         },
         {
           "id": "D6",
           "value_mm": 200,
-          "role": "branch",
-          "reason": "короткий отвод"
+          "role": "main",
+          "reason": "кусок трассы"
         }
       ],
       "excluded": [],
       "ambiguous": [],
-      "ai_calls": 0
+      "ai_calls": 2,
+      "markup": "02_Изометрии_10_листов/markup/sheet_01_SW_1002.png"
     },
     {
       "sheet_no": 2,
@@ -174,14 +203,15 @@
           "reason": "у арматуры"
         }
       ],
-      "ai_calls": 0
+      "ai_calls": 0,
+      "markup": "02_Изометрии_10_листов/markup/sheet_02_P15_1039.png"
     },
     {
       "sheet_no": 3,
       "line_id": "P15_1037",
-      "length_mm": 4529,
-      "length_m": 4.529,
-      "formula": "950 + 500 + 1250 + 198 + 224 + 228 + 200 + 168 + 146 + 178 + 13 + 210 + 264 = 4529 мм",
+      "length_mm": 4516,
+      "length_m": 4.516,
+      "formula": "950 + 500 + 1250 + 198 + 224 + 228 + 200 + 168 + 146 + 178 + 210 + 264 = 4516 мм",
       "status": "ok",
       "remarks": "",
       "included": [
@@ -189,79 +219,73 @@
           "id": "D2",
           "value_mm": 950,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D3",
           "value_mm": 500,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D4",
           "value_mm": 1250,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D5",
           "value_mm": 198,
-          "role": "branch",
-          "reason": "Короткий отвод"
+          "role": "main",
+          "reason": "участок у узла"
         },
         {
           "id": "D6",
           "value_mm": 224,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D7",
           "value_mm": 228,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D8",
           "value_mm": 200,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D9",
           "value_mm": 168,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок у узла"
         },
         {
           "id": "D10",
           "value_mm": 146,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D11",
           "value_mm": 178,
           "role": "main",
-          "reason": "Участок трассы"
-        },
-        {
-          "id": "D12",
-          "value_mm": 13,
-          "role": "main",
-          "reason": "Короткий отвод"
+          "reason": "участок трубы"
         },
         {
           "id": "D13",
           "value_mm": 210,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D14",
           "value_mm": 264,
           "role": "main",
-          "reason": "Участок трассы"
+          "reason": "участок трубы"
         }
       ],
       "excluded": [
@@ -269,18 +293,25 @@
           "id": "D1",
           "value_mm": 2364,
           "role": "overall_same_run",
-          "reason": "Габарит, включает D2, D3, D4"
+          "reason": "габарит прогона"
+        },
+        {
+          "id": "D12",
+          "value_mm": 13,
+          "role": "other",
+          "reason": "мелкая деталь"
         }
       ],
       "ambiguous": [],
-      "ai_calls": 0
+      "ai_calls": 2,
+      "markup": "02_Изометрии_10_листов/markup/sheet_03_P15_1037.png"
     },
     {
       "sheet_no": 4,
       "line_id": "SW_1003",
-      "length_mm": 2040,
-      "length_m": 2.04,
-      "formula": "250 + 214 + 214 + 504 + 188 + 171 + 154 + 190 + 155 = 2040 мм",
+      "length_mm": 2960,
+      "length_m": 2.96,
+      "formula": "250 + 214 + 214 + 504 + 188 + 378 + 81 + 171 + 81 + 154 + 190 + 380 + 155 = 2960 мм",
       "status": "ok",
       "remarks": "",
       "included": [
@@ -288,109 +319,110 @@
           "id": "D1",
           "value_mm": 250,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D2",
           "value_mm": 214,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D4",
           "value_mm": 214,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D5",
           "value_mm": 504,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D6",
           "value_mm": 188,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
+        },
+        {
+          "id": "D7",
+          "value_mm": 378,
+          "role": "main",
+          "reason": "участок трубы"
+        },
+        {
+          "id": "D9",
+          "value_mm": 81,
+          "role": "main",
+          "reason": "участок трубы"
         },
         {
           "id": "D10",
           "value_mm": 171,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
+        },
+        {
+          "id": "D12",
+          "value_mm": 81,
+          "role": "main",
+          "reason": "участок трубы"
         },
         {
           "id": "D13",
           "value_mm": 154,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D14",
           "value_mm": 190,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
+        },
+        {
+          "id": "D15",
+          "value_mm": 380,
+          "role": "main",
+          "reason": "участок трубы"
         },
         {
           "id": "D17",
           "value_mm": 155,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         }
       ],
       "excluded": [
         {
           "id": "D3",
           "value_mm": 159,
-          "role": "other",
-          "reason": "габарит/координата"
-        },
-        {
-          "id": "D7",
-          "value_mm": 378,
-          "role": "overall_same_run",
-          "reason": "сумма участков"
+          "role": "support_offset",
+          "reason": "опора"
         },
         {
           "id": "D8",
           "value_mm": 159,
-          "role": "other",
-          "reason": "габарит/координата"
-        },
-        {
-          "id": "D9",
-          "value_mm": 81,
-          "role": "other",
-          "reason": "габарит/координата"
+          "role": "support_offset",
+          "reason": "опора"
         },
         {
           "id": "D11",
           "value_mm": 159,
-          "role": "other",
-          "reason": "габарит/координата"
-        },
-        {
-          "id": "D12",
-          "value_mm": 81,
-          "role": "other",
-          "reason": "габарит/координата"
-        },
-        {
-          "id": "D15",
-          "value_mm": 380,
-          "role": "overall_same_run",
-          "reason": "сумма участков"
+          "role": "support_offset",
+          "reason": "опора"
         },
         {
           "id": "D16",
           "value_mm": 159,
-          "role": "other",
-          "reason": "габарит/координата"
+          "role": "support_offset",
+          "reason": "опора"
         }
       ],
       "ambiguous": [],
-      "ai_calls": 0
+      "ai_calls": 2,
+      "markup": "02_Изометрии_10_листов/markup/sheet_04_SW_1003.png"
     },
     {
       "sheet_no": 5,
@@ -465,14 +497,15 @@
         }
       ],
       "ambiguous": [],
-      "ai_calls": 0
+      "ai_calls": 0,
+      "markup": "02_Изометрии_10_листов/markup/sheet_05_LC_1034.png"
     },
     {
       "sheet_no": 6,
       "line_id": "LC_1042",
-      "length_mm": 11626,
-      "length_m": 11.626,
-      "formula": "285 + 651 + 850 + 238 + 2463 + 2000 + 34 + 1600 + 3505 = 11626 мм",
+      "length_mm": 10521,
+      "length_m": 10.521,
+      "formula": "285 + 651 + 850 + 238 + 2463 + 2000 + 2400 + 34 + 1600 = 10521 мм",
       "status": "ok",
       "remarks": "",
       "included": [
@@ -480,55 +513,55 @@
           "id": "D1",
           "value_mm": 285,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D2",
           "value_mm": 651,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D3",
           "value_mm": 850,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D4",
           "value_mm": 238,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D5",
           "value_mm": 2463,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D7",
           "value_mm": 2000,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
+        },
+        {
+          "id": "D8",
+          "value_mm": 2400,
+          "role": "main",
+          "reason": "участок трубы"
         },
         {
           "id": "D9",
           "value_mm": 34,
-          "role": "branch",
+          "role": "main",
           "reason": "короткий отвод"
         },
         {
           "id": "D10",
           "value_mm": 1600,
           "role": "main",
-          "reason": "участок трассы"
-        },
-        {
-          "id": "D11",
-          "value_mm": 3505,
-          "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         }
       ],
       "excluded": [
@@ -536,17 +569,18 @@
           "id": "D6",
           "value_mm": 2950,
           "role": "overall_same_run",
-          "reason": "сумма участков"
+          "reason": "габарит пары"
         },
         {
-          "id": "D8",
-          "value_mm": 2400,
+          "id": "D11",
+          "value_mm": 3505,
           "role": "overall_same_run",
-          "reason": "сумма участков"
+          "reason": "габарит"
         }
       ],
       "ambiguous": [],
-      "ai_calls": 0
+      "ai_calls": 2,
+      "markup": "02_Изометрии_10_листов/markup/sheet_06_LC_1042.png"
     },
     {
       "sheet_no": 7,
@@ -561,43 +595,43 @@
           "id": "D1",
           "value_mm": 60,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D3",
           "value_mm": 1950,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D4",
           "value_mm": 34,
-          "role": "branch",
+          "role": "main",
           "reason": "короткий отвод"
         },
         {
           "id": "D5",
           "value_mm": 650,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D7",
           "value_mm": 840,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D8",
           "value_mm": 522,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D9",
           "value_mm": 250,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         }
       ],
       "excluded": [
@@ -605,17 +639,18 @@
           "id": "D2",
           "value_mm": 916,
           "role": "other",
-          "reason": "вложенный размер"
+          "reason": "вложено в 1950"
         },
         {
           "id": "D6",
           "value_mm": 300,
           "role": "other",
-          "reason": "вложенный размер"
+          "reason": "вложено в 840"
         }
       ],
       "ambiguous": [],
-      "ai_calls": 0
+      "ai_calls": 2,
+      "markup": "02_Изометрии_10_листов/markup/sheet_07_LC_1040.png"
     },
     {
       "sheet_no": 8,
@@ -702,7 +737,8 @@
         }
       ],
       "ambiguous": [],
-      "ai_calls": 0
+      "ai_calls": 0,
+      "markup": "02_Изометрии_10_листов/markup/sheet_08_SW_1001.png"
     },
     {
       "sheet_no": 9,
@@ -738,7 +774,7 @@
           "id": "D3",
           "value_mm": 244,
           "role": "valve",
-          "reason": "штурвал UP 244"
+          "reason": "руками"
         },
         {
           "id": "D4",
@@ -747,118 +783,120 @@
           "reason": "изоляция/арматура 123"
         }
       ],
-      "ai_calls": 0
+      "ai_calls": 0,
+      "markup": "02_Изометрии_10_листов/markup/sheet_09_SW_1009.png"
     },
     {
       "sheet_no": 10,
       "line_id": "SW_1012",
-      "length_mm": 9332,
-      "length_m": 9.332,
-      "formula": "154 + 341 + 220 + 4116 + 188 + 134 + 550 + 2450 + 341 + 149 + 220 + 135 + 134 + 200 = 9332 мм",
-      "status": "review",
-      "remarks": "глянуть: D2=244, D11=244",
+      "length_mm": 5216,
+      "length_m": 5.216,
+      "formula": "154 + 341 + 220 + 188 + 134 + 550 + 2450 + 341 + 149 + 220 + 135 + 134 + 200 = 5216 мм",
+      "status": "ok",
+      "remarks": "",
       "included": [
         {
           "id": "D1",
           "value_mm": 154,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D3",
           "value_mm": 341,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D4",
           "value_mm": 220,
           "role": "main",
-          "reason": "участок трассы"
-        },
-        {
-          "id": "D5",
-          "value_mm": 4116,
-          "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D6",
           "value_mm": 188,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D7",
           "value_mm": 134,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D8",
           "value_mm": 550,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D9",
           "value_mm": 2450,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D10",
           "value_mm": 341,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D12",
           "value_mm": 149,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D13",
           "value_mm": 220,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D14",
           "value_mm": 135,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D15",
           "value_mm": 134,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         },
         {
           "id": "D16",
           "value_mm": 200,
           "role": "main",
-          "reason": "участок трассы"
+          "reason": "участок трубы"
         }
       ],
-      "excluded": [],
-      "ambiguous": [
+      "excluded": [
         {
           "id": "D2",
           "value_mm": 244,
           "role": "valve",
-          "reason": "штурвал, не длина"
+          "reason": "штурвал"
+        },
+        {
+          "id": "D5",
+          "value_mm": 4116,
+          "role": "overall_same_run",
+          "reason": "габарит LT"
         },
         {
           "id": "D11",
           "value_mm": 244,
           "role": "valve",
-          "reason": "штурвал, не длина"
+          "reason": "штурвал"
         }
       ],
-      "ai_calls": 0
+      "ambiguous": [],
+      "ai_calls": 2,
+      "markup": "02_Изометрии_10_листов/markup/sheet_10_SW_1012.png"
     }
   ]
 }

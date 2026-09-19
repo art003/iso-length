@@ -5,37 +5,37 @@
       "id": "D1",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "кусок трассы"
     },
     {
       "id": "D2",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "кусок трассы"
     },
     {
       "id": "D3",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "кусок трассы"
     },
     {
       "id": "D4",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "кусок трассы"
     },
     {
       "id": "D5",
       "decision": "include",
-      "role": "branch",
-      "reason": "короткий отвод"
+      "role": "main",
+      "reason": "кусок трассы"
     },
     {
       "id": "D6",
       "decision": "include",
-      "role": "branch",
-      "reason": "короткий отвод"
+      "role": "main",
+      "reason": "кусок трассы"
     }
   ],
   "notes": []

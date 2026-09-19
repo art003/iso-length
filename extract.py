@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import pymupdf
 
 COORD_RE = re.compile(r"^(X|Y|Z\+?)\s*(\d+)$", re.I)
+PLANT_COORD_RE = re.compile(r"\b([XYZ]\+?)\s*(\d{4,6})\b", re.I)
 DN_RE = re.compile(r"^DN\d", re.I)
 SUPPORT_RE = re.compile(r"^[ОOФFПP]\d+[АAБB]?$", re.I)
 BALLOON_RE = re.compile(r"^<\d+>$")
@@ -33,6 +34,7 @@ class Candidate:
     bbox: tuple[float, float, float, float]
     nearby: str
     local_hint: str
+    flags: set[str] = field(default_factory=set)
 
 
 @dataclass
@@ -177,7 +179,114 @@ def build_candidates(spans: list[Span], width: float, height: float) -> tuple[li
                 local_hint=hint,
             )
         )
+    _tag_specials(candidates, spans)
     return candidates, pre_excluded
+
+
+def _tag_specials(candidates: list[Candidate], spans: list[Span]) -> None:
+    overall_re = re.compile(r"^[НH]\.?[ОO]\.?$")
+    for sp in spans:
+        raw = sp.text.strip()
+        up = raw.upper()
+        compact = up.replace(" ", "")
+        kind = ""
+        radius = 0.0
+        if overall_re.fullmatch(compact):
+            kind, radius = "overall", 90.0
+        elif "ШТУРВАЛ" in up:
+            kind, radius = "handwheel", 40.0
+        elif "ИЗОЛЯЦ" in up or "ОБОГРЕВ" in up:
+            kind, radius = "insulation", 100.0
+        if not kind:
+            continue
+        near = [
+            c
+            for c in candidates
+            if (c.x - sp.x) ** 2 + (c.y - sp.y) ** 2 <= radius * radius
+        ]
+        if kind == "overall" and near:
+            max(near, key=lambda c: c.value_mm).flags.add("overall_mark")
+        elif kind in ("handwheel", "insulation"):
+            for c in near:
+                c.flags.add(kind)
+    for c in candidates:
+        extra = []
+        if "overall_mark" in c.flags:
+            extra.append("overall_mark")
+        if "handwheel" in c.flags and "near_valve_handwheel" not in c.local_hint:
+            extra.append("near_valve_handwheel")
+        if "insulation" in c.flags:
+            extra.append("near_insulation")
+        if extra:
+            c.local_hint = c.local_hint + "|" + "|".join(extra)
+    _tag_overlap_overalls(candidates)
+    _tag_plant_coords(candidates)
+    _tag_repeated_supports(candidates)
+    _tag_iso_lt(candidates)
+
+
+def _dist(a: Candidate, b: Candidate) -> float:
+    return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5
+
+
+def _tag_plant_coords(candidates: list[Candidate]) -> None:
+    """Z+ 37329 рядом — координата узла. Само 1383 остаётся длиной участка."""
+    for c in candidates:
+        hit = False
+        for m in PLANT_COORD_RE.finditer(c.nearby or ""):
+            n = int(m.group(2))
+            if n != c.value_mm and n >= 9000:
+                hit = True
+                break
+        if not hit:
+            continue
+        c.flags.add("near_plant_coord")
+        if "near_plant_coord" not in c.local_hint:
+            c.local_hint = c.local_hint + "|near_plant_coord"
+
+
+def _tag_overlap_overalls(candidates: list[Candidate]) -> None:
+    """Два числа почти в одной точке (2463 и 2950) — большее габарит этого куска."""
+    for i, a in enumerate(candidates):
+        for b in candidates[i + 1 :]:
+            lo, hi = (a, b) if a.value_mm <= b.value_mm else (b, a)
+            if lo.value_mm <= 0:
+                continue
+            ratio = hi.value_mm / lo.value_mm
+            near_a = str(lo.value_mm) in (hi.nearby or "")
+            near_b = str(hi.value_mm) in (lo.nearby or "")
+            if not (near_a or near_b):
+                continue
+            d = _dist(a, b)
+            close_same = 1.08 <= ratio <= 1.35 and d <= 28
+            stacked_overall = 2.0 <= ratio <= 3.5 and d <= 25
+            if not (close_same or stacked_overall):
+                continue
+            hi.flags.add("overall_pair")
+            if "overall_pair" not in hi.local_hint:
+                hi.local_hint = hi.local_hint + "|overall_pair"
+
+
+def _tag_repeated_supports(candidates: list[Candidate]) -> None:
+    """Один и тот же 81/159 на каждом упоре — не длина трубы."""
+    from collections import Counter
+
+    cnt = Counter(c.value_mm for c in candidates)
+    for c in candidates:
+        if cnt[c.value_mm] < 3 or c.value_mm < 50 or c.value_mm > 200:
+            continue
+        c.flags.add("support_repeat")
+        if "support_repeat" not in c.local_hint:
+            c.local_hint = c.local_hint + "|support_repeat"
+
+
+def _tag_iso_lt(candidates: list[Candidate]) -> None:
+    for c in candidates:
+        bits = [b.strip().upper() for b in (c.nearby or "").split("|")]
+        if "LT" in bits and c.value_mm >= 2500:
+            c.flags.add("iso_lt")
+            if "iso_lt" not in c.local_hint:
+                c.local_hint = c.local_hint + "|iso_lt"
 
 
 def render_page_png(page: pymupdf.Page, dpi: int = 130) -> tuple[bytes, float]:

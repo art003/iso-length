@@ -5,55 +5,55 @@
       "id": "D1",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D2",
       "decision": "exclude_nested",
       "role": "other",
-      "reason": "вложенный размер"
+      "reason": "вложено в 1950"
     },
     {
       "id": "D3",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D4",
       "decision": "include",
-      "role": "branch",
+      "role": "main",
       "reason": "короткий отвод"
     },
     {
       "id": "D5",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D6",
       "decision": "exclude_nested",
       "role": "other",
-      "reason": "вложенный размер"
+      "reason": "вложено в 840"
     },
     {
       "id": "D7",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D8",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     },
     {
       "id": "D9",
       "decision": "include",
       "role": "main",
-      "reason": "участок трассы"
+      "reason": "участок трубы"
     }
   ],
   "notes": []

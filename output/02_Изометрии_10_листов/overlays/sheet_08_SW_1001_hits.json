@@ -1,0 +1,122 @@
+{
+  "sheet_no": 8,
+  "line_id": "SW_1001",
+  "width": 2150,
+  "height": 1521,
+  "overlay": "sheet_08_SW_1001_ids.png",
+  "markup": "sheet_08_SW_1001.png",
+  "candidates": [
+    {
+      "id": "D1",
+      "value_mm": 1850,
+      "x": 1171.2,
+      "y": 988.9,
+      "nearby": "DN80",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D2",
+      "value_mm": 6000,
+      "x": 1071.9,
+      "y": 931.7,
+      "nearby": "",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D3",
+      "value_mm": 5000,
+      "x": 961.4,
+      "y": 868.0,
+      "nearby": "23525",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D4",
+      "value_mm": 5200,
+      "x": 854.0,
+      "y": 805.6,
+      "nearby": "О6 | 23525 | Н.О.",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D5",
+      "value_mm": 3800,
+      "x": 749.1,
+      "y": 746.3,
+      "nearby": "",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D6",
+      "value_mm": 23525,
+      "x": 932.0,
+      "y": 814.9,
+      "nearby": "5000 | 5200 | Н.О.",
+      "local_hint": "dimension_candidate|overall_mark",
+      "flags": [
+        "overall_mark"
+      ]
+    },
+    {
+      "id": "D7",
+      "value_mm": 1000,
+      "x": 237.0,
+      "y": 696.5,
+      "nearby": "<2> | 1",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D8",
+      "value_mm": 4100,
+      "x": 441.0,
+      "y": 723.8,
+      "nearby": "",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D9",
+      "value_mm": 6000,
+      "x": 740.4,
+      "y": 552.2,
+      "nearby": "",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D10",
+      "value_mm": 6000,
+      "x": 900.3,
+      "y": 459.1,
+      "nearby": "24100 | Н.О.",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D11",
+      "value_mm": 6000,
+      "x": 1062.4,
+      "y": 365.9,
+      "nearby": "О3",
+      "local_hint": "dimension_candidate",
+      "flags": []
+    },
+    {
+      "id": "D12",
+      "value_mm": 24100,
+      "x": 917.2,
+      "y": 485.3,
+      "nearby": "6000",
+      "local_hint": "dimension_candidate|overall_mark",
+      "flags": [
+        "overall_mark"
+      ]
+    }
+  ]
+}

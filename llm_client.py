@@ -10,7 +10,7 @@ from pathlib import Path
 
 import httpx
 
-from prompts import SYSTEM_PROMPT, user_prompt
+from prompts import REVIEW_SYSTEM, SYSTEM_PROMPT, review_prompt, user_prompt
 
 JSON_FENCE = re.compile(r"```(?:json)?\s*(\{.*\})\s*```", re.S)
 
@@ -103,9 +103,22 @@ class LlmClient:
             raise RuntimeError(f"Неизвестный ISO_LLM_PROVIDER={self.provider}")
         self.usage = LlmUsage(provider=self.provider, model=self.model)
 
-    def classify_sheet(self, sheet_no: int, line_id: str, candidates: list[dict], image_png: bytes) -> dict:
-        prompt = user_prompt(sheet_no, line_id, candidates)
+    def classify_sheet(
+        self,
+        sheet_no: int,
+        line_id: str,
+        candidates: list[dict],
+        image_png: bytes,
+        first: dict | None = None,
+        hint: str = "",
+    ) -> dict:
         wanted = {c["id"] for c in candidates}
+        if first:
+            prompt = review_prompt(sheet_no, line_id, candidates, first, hint)
+            system = REVIEW_SYSTEM
+        else:
+            prompt = user_prompt(sheet_no, line_id, candidates)
+            system = SYSTEM_PROMPT
         last_err = None
         tries = 2 if self.provider in ("openrouter", "groq") else 3
         for attempt in range(tries):
@@ -116,7 +129,7 @@ class LlmClient:
                 elif self.provider == "openrouter":
                     time.sleep(10)
                 prompt = prompt + "\nПовтори JSON целиком. Нужны ВСЕ id: " + ", ".join(sorted(wanted))
-            raw = self._complete(prompt, image_png, sheet_no)
+            raw = self._complete(prompt, image_png, sheet_no, system)
             try:
                 data = _parse_json(raw)
             except json.JSONDecodeError as e:
@@ -131,20 +144,27 @@ class LlmClient:
             prompt = prompt + f"\nНе хватает меток: {missing}. Верни полный JSON."
         raise RuntimeError(f"LLM не вернул полный JSON: {last_err}")
 
-    def _complete(self, prompt: str, image_png: bytes, sheet_no: int | None = None) -> str:
+    def _complete(
+        self,
+        prompt: str,
+        image_png: bytes,
+        sheet_no: int | None = None,
+        system: str | None = None,
+    ) -> str:
         t0 = time.perf_counter()
+        sys_p = system or SYSTEM_PROMPT
         if self.provider in ("openai", "openrouter", "groq"):
-            text, inn, out = self._openai(prompt, image_png)
+            text, inn, out = self._openai(prompt, image_png, sys_p)
         elif self.provider == "codex":
-            text, inn, out = self._codex(prompt, image_png)
+            text, inn, out = self._codex(prompt, image_png, sys_p)
         elif self.provider == "ollama":
-            text, inn, out = self._ollama(prompt, image_png)
+            text, inn, out = self._ollama(prompt, image_png, sys_p)
         elif self.provider == "replay":
             text, inn, out = self._replay(sheet_no)
             self.usage.elapsed_s += time.perf_counter() - t0
             return text
         else:
-            text, inn, out = self._gemini(prompt, image_png)
+            text, inn, out = self._gemini(prompt, image_png, sys_p)
         self.usage.calls += 1
         self.usage.input_tokens += inn
         self.usage.output_tokens += out
@@ -226,7 +246,7 @@ class LlmClient:
             raise RuntimeError(f"replay: нет файла {path}")
         return path.read_text(encoding="utf-8"), 0, 0
 
-    def _ollama(self, prompt: str, image_png: bytes) -> tuple[str, int, int]:
+    def _ollama(self, prompt: str, image_png: bytes, system: str = SYSTEM_PROMPT) -> tuple[str, int, int]:
         import base64
 
         side = int(os.getenv("OLLAMA_IMAGE_SIDE", "2000"))
@@ -247,7 +267,7 @@ class LlmClient:
             "keep_alive": "30m",
             "options": options,
             "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": system},
                 {"role": "user", "content": prompt, "images": [b64]},
             ],
         }
@@ -266,7 +286,7 @@ class LlmClient:
         text = ((data.get("message") or {}).get("content")) or ""
         return text, 0, 0
 
-    def _openai(self, prompt: str, image_png: bytes) -> tuple[str, int, int]:
+    def _openai(self, prompt: str, image_png: bytes, system: str = SYSTEM_PROMPT) -> tuple[str, int, int]:
         import base64
 
         if self.provider == "groq":
@@ -282,7 +302,7 @@ class LlmClient:
             "model": self.model,
             "temperature": 0,
             "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": system},
                 {
                     "role": "user",
                     "content": [
@@ -312,14 +332,14 @@ class LlmClient:
         usage = data.get("usage") or {}
         return text, int(usage.get("prompt_tokens") or 0), int(usage.get("completion_tokens") or 0)
 
-    def _codex(self, prompt: str, image_png: bytes) -> tuple[str, int, int]:
+    def _codex(self, prompt: str, image_png: bytes, system: str = SYSTEM_PROMPT) -> tuple[str, int, int]:
         import base64
 
         img_bytes, mime = _compact_image(image_png, max_side=1800, as_jpeg=False)
         b64 = base64.b64encode(img_bytes).decode("ascii")
         payload = {
             "model": self.model,
-            "instructions": SYSTEM_PROMPT,
+            "instructions": system,
             "input": [
                 {
                     "role": "user",
@@ -345,7 +365,7 @@ class LlmClient:
         usage = data.get("usage") or {}
         return text, int(usage.get("input_tokens") or 0), int(usage.get("output_tokens") or 0)
 
-    def _gemini(self, prompt: str, image_png: bytes) -> tuple[str, int, int]:
+    def _gemini(self, prompt: str, image_png: bytes, system: str = SYSTEM_PROMPT) -> tuple[str, int, int]:
         import base64
 
         b64 = base64.b64encode(image_png).decode("ascii")
@@ -354,7 +374,7 @@ class LlmClient:
             f"?key={self.api_key}"
         )
         payload = {
-            "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+            "systemInstruction": {"parts": [{"text": system}]},
             "contents": [
                 {
                     "role": "user",
