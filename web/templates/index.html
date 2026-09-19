@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Расчёт длины по изометриям</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="header__nav">
+      <a class="header__logo" href="#calc" data-page="calc">
+        <img src="/static/img/logo.svg" alt="Компания КРУС-Запад">
+      </a>
+      <ul class="header__links">
+        <li><a href="#calc" data-page="calc" class="is-on">Расчёт</a></li>
+        <li><a href="#results" data-page="results">Результаты</a></li>
+        <li><a href="#help" data-page="help">Как пользоваться</a></li>
+      </ul>
+    </nav>
+    <div class="busy-wrap"><div class="busy-bar" id="busy"></div></div>
+  </header>
+
+  <section class="hero">
+    <div class="hero__inner">
+      <h1>Расчёт длины<br>по изометриям</h1>
+      <p>ИИ размечает размеры на чертеже. Сумму считает программа. Спорное уходит в review и в длину не входит.</p>
+      <div class="hero__stats">
+        <div><b id="stat-pages">—</b><span>листов в последнем прогоне</span></div>
+        <div><b id="stat-api">Groq</b><span>выбранный API</span></div>
+        <div><b id="stat-cost">$0</b><span>стоимость по тарифу</span></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <section id="page-calc" class="page is-on">
+      <div class="grid">
+        <div class="card">
+          <h2>Параметры</h2>
+          <form id="form">
+            <label class="lbl">PDF с изометриями</label>
+            <input type="file" id="pdf" accept=".pdf">
+            <label class="check"><input type="checkbox" id="use-default" checked> взять файл из data, если свой не выбран</label>
+
+            <label class="lbl">API</label>
+            <div class="apis">
+              <label class="api is-on"><input type="radio" name="api" value="Groq" checked><b>Groq</b><span>бесплатно</span></label>
+              <label class="api"><input type="radio" name="api" value="OpenAI"><b>OpenAI</b><span>gpt-4o</span></label>
+              <label class="api"><input type="radio" name="api" value="OpenAI Codex"><b>Codex</b><span>gpt-5-codex</span></label>
+            </div>
+            <p class="hint" id="hint">бесплатно, ключ gsk_ с console.groq.com/keys</p>
+
+            <label class="lbl">модель</label>
+            <input type="text" id="model" value="qwen/qwen3.8-27b">
+
+            <label class="lbl">ключ API</label>
+            <input type="password" id="key" autocomplete="off">
+
+            <label class="lbl">листы</label>
+            <input type="text" id="pages" placeholder="пусто = все, или 7 или 1,7">
+
+            <label class="check"><input type="checkbox" id="replay"> не звонить в API, взять json из output/llm_raw</label>
+            <label class="check"><input type="checkbox" id="fresh"> пересчитать заново, старые json не брать</label>
+
+            <div class="actions">
+              <button class="btn" type="submit" id="run">Рассчитать</button>
+              <button class="btn btn-ghost" type="button" id="open-out">Папка output</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <h2>Ход расчёта</h2>
+          <div class="log" id="log">Готово к запуску.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-results" class="page">
+      <div class="card">
+        <h2>Таблица длин</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>лист</th><th>линия</th><th>мм</th><th>м</th><th>статус</th><th>формула</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+    </section>
+
+    <section id="page-help" class="page">
+      <div class="card help">
+        <h2>Как пользоваться</h2>
+        <ol>
+          <li>Выбери PDF или оставь галку «файл из data».</li>
+          <li>API: Groq без карты, OpenAI и Codex за деньги, ключ один на оба OpenAI.</li>
+          <li>Если меняешь API после Groq — включи «пересчитать заново», иначе подтянутся старые json.</li>
+          <li>Нажми Рассчитать. На Groq между листами пауза около минуты — так лимит, не зависание.</li>
+          <li>Таблица и картинки появятся во вкладке Результаты и в папке output.</li>
+        </ol>
+        <p>Длина = куски вдоль трубы + ветки, один раз, до ПОДКЛЮЧЕНИЕ и СМ. Габарит и штурвал в сумму не идут.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Расчёт длины трубопроводов по изометриям</span>
+    <span>prod by art003</span>
+  </footer>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

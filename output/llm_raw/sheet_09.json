@@ -1,0 +1,11 @@
+{
+  "line_id": "SW_1009",
+  "items": [
+    {"id": "D1", "decision": "include", "role": "main", "reason": "к подключению"},
+    {"id": "D2", "decision": "ambiguous", "role": "valve", "reason": "изоляция/арматура 123"},
+    {"id": "D3", "decision": "ambiguous", "role": "valve", "reason": "штурвал UP 244"},
+    {"id": "D4", "decision": "ambiguous", "role": "valve", "reason": "изоляция/арматура 123"},
+    {"id": "D5", "decision": "include", "role": "main", "reason": "вертикаль к СМ"}
+  ],
+  "notes": ["штурвал и короба изоляции в сумму не брал"]
+}

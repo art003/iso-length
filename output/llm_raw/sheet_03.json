@@ -1,0 +1,90 @@
+{
+  "line_id": "P15_1037",
+  "items": [
+    {
+      "id": "D1",
+      "decision": "exclude_nested",
+      "role": "overall_same_run",
+      "reason": "Габарит, включает D2, D3, D4"
+    },
+    {
+      "id": "D2",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D3",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D4",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D5",
+      "decision": "include",
+      "role": "branch",
+      "reason": "Короткий отвод"
+    },
+    {
+      "id": "D6",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D7",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D8",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D9",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D10",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D11",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D12",
+      "decision": "include",
+      "role": "main",
+      "reason": "Короткий отвод"
+    },
+    {
+      "id": "D13",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    },
+    {
+      "id": "D14",
+      "decision": "include",
+      "role": "main",
+      "reason": "Участок трассы"
+    }
+  ],
+  "notes": []
+}

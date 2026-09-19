@@ -1,0 +1,21 @@
+{
+  "line_id": "P15_1039",
+  "items": [
+    {"id": "D1", "decision": "include", "role": "main", "reason": "к нижнему СМ"},
+    {"id": "D2", "decision": "include", "role": "branch", "reason": "отвод DN50X50"},
+    {"id": "D3", "decision": "include", "role": "main", "reason": "у тройника"},
+    {"id": "D4", "decision": "include", "role": "main", "reason": "участок контура"},
+    {"id": "D5", "decision": "include", "role": "main", "reason": "правый стояк"},
+    {"id": "D6", "decision": "include", "role": "main", "reason": "короткий участок"},
+    {"id": "D7", "decision": "include", "role": "main", "reason": "внутренний участок"},
+    {"id": "D8", "decision": "include", "role": "main", "reason": "верхний прогон"},
+    {"id": "D9", "decision": "exclude_nested", "role": "overall_same_run", "reason": "габарит того же прогона что D8"},
+    {"id": "D10", "decision": "exclude_nested", "role": "support_offset", "reason": "опора внутри D8"},
+    {"id": "D11", "decision": "include", "role": "main", "reason": "сторона треугольника"},
+    {"id": "D12", "decision": "include", "role": "main", "reason": "нижний прогон"},
+    {"id": "D13", "decision": "include", "role": "main", "reason": "внутренний контур"},
+    {"id": "D14", "decision": "ambiguous", "role": "valve", "reason": "у арматуры"},
+    {"id": "D15", "decision": "ambiguous", "role": "valve", "reason": "у арматуры"}
+  ],
+  "notes": ["D14 и D15 у арматуры, в сумму не брал"]
+}

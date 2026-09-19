@@ -1,0 +1,60 @@
+{
+  "line_id": "LC_1040",
+  "items": [
+    {
+      "id": "D1",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D2",
+      "decision": "exclude_nested",
+      "role": "other",
+      "reason": "вложенный размер"
+    },
+    {
+      "id": "D3",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D4",
+      "decision": "include",
+      "role": "branch",
+      "reason": "короткий отвод"
+    },
+    {
+      "id": "D5",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D6",
+      "decision": "exclude_nested",
+      "role": "other",
+      "reason": "вложенный размер"
+    },
+    {
+      "id": "D7",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D8",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D9",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    }
+  ],
+  "notes": []
+}

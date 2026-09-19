@@ -1,0 +1,18 @@
+{
+  "line_id": "SW_1001",
+  "items": [
+    {"id": "D1", "decision": "include", "role": "main", "reason": "участок трассы"},
+    {"id": "D2", "decision": "include", "role": "main", "reason": "кусок 6000"},
+    {"id": "D3", "decision": "include", "role": "main", "reason": "кусок 5000"},
+    {"id": "D4", "decision": "include", "role": "main", "reason": "кусок 5200"},
+    {"id": "D5", "decision": "include", "role": "main", "reason": "кусок 3800"},
+    {"id": "D6", "decision": "exclude_nested", "role": "overall_same_run", "reason": "габарит 23525"},
+    {"id": "D7", "decision": "include", "role": "main", "reason": "кусок 1000"},
+    {"id": "D8", "decision": "include", "role": "main", "reason": "кусок 4100"},
+    {"id": "D9", "decision": "include", "role": "main", "reason": "кусок 6000"},
+    {"id": "D10", "decision": "include", "role": "main", "reason": "кусок 6000"},
+    {"id": "D11", "decision": "include", "role": "main", "reason": "кусок 6000"},
+    {"id": "D12", "decision": "exclude_nested", "role": "overall_same_run", "reason": "габарит 24100"}
+  ],
+  "notes": ["в сумму куски, не габариты 23525 и 24100"]
+}

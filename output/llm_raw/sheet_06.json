@@ -1,0 +1,72 @@
+{
+  "line_id": "LC_1042",
+  "items": [
+    {
+      "id": "D1",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D2",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D3",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D4",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D5",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D6",
+      "decision": "exclude_nested",
+      "role": "overall_same_run",
+      "reason": "сумма участков"
+    },
+    {
+      "id": "D7",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D8",
+      "decision": "exclude_nested",
+      "role": "overall_same_run",
+      "reason": "сумма участков"
+    },
+    {
+      "id": "D9",
+      "decision": "include",
+      "role": "branch",
+      "reason": "короткий отвод"
+    },
+    {
+      "id": "D10",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    },
+    {
+      "id": "D11",
+      "decision": "include",
+      "role": "main",
+      "reason": "участок трассы"
+    }
+  ],
+  "notes": []
+}
